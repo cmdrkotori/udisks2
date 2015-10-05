@@ -96,7 +96,10 @@ void UDisks2::addDrive(const QString &node)
     if (drives_.contains(node))
         drives_.value(node)->update();
     else {
-        drives_.insert(node, new UDisks2Drive(node, this));
+        auto drive = new UDisks2Drive(node, this);
+        connect(drive, &UDisks2Drive::changed,
+                this, &UDisks2::driveChanged);
+        drives_.insert(node, drive);
         emit driveAdded(node);
     }
 }
@@ -111,6 +114,8 @@ void UDisks2::addBlock(const QString &node)
                 this, &UDisks2::filesystemAdded);
         connect(block, &UDisks2Block::filesystemRemoved,
                 this, &UDisks2::filesystemRemoved);
+        connect(block, &UDisks2Block::changed,
+                this, &UDisks2::blockChanged);
         blocks_.insert(node, block);
         emit blockDeviceAdded(node);
     }
@@ -233,6 +238,7 @@ void UDisks2Block::self_propertiesChanged(const QString &interface, const QVaria
 {
     update();
     updateFilesystem();
+    emit this->changed(name);
 }
 
 
@@ -271,9 +277,10 @@ void UDisks2Drive::update()
     available = dbus->property("MediaAvailable").toBool();
 }
 
-void UDisks2Drive::self_propertiesChanged(const QString &interface, const QVariantMap &changed, const QStringList &invalidated)
+void UDisks2Drive::self_propertiesChanged(const QString &interface, const QVariantMap &changedProp, const QStringList &invalidatedProp)
 {
     update();
+    emit this->changed(name);
 }
 
 

@@ -24,8 +24,10 @@ signals:
     void deviceInformationChanged(QString node, QVariantMap info);
     void driveAdded(const QString& node);
     void driveRemoved(const QString& node);
+    void driveChanged(const QString& node);
     void blockDeviceAdded(const QString& node);
     void blockDeviceRemoved(const QString &node);
+    void blockChanged(const QString &node);
     void filesystemAdded(const QString& node);
     void filesystemRemoved(const QString &node);
 
@@ -71,6 +73,7 @@ public:
 signals:
     void filesystemAdded(const QString& node);
     void filesystemRemoved(const QString &node);
+    void changed(const QString &node);
 
 private slots:
     void self_propertiesChanged(const QString &interface, const QVariantMap &changed, const QStringList &invalidated);
@@ -113,6 +116,9 @@ public:
     QString toString();
 
     void update();
+
+signals:
+    void changed(const QString &node);
 
 private slots:
     void self_propertiesChanged(const QString &interface, const QVariantMap &changed, const QStringList &invalidated);
