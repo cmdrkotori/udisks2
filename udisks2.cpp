@@ -173,7 +173,6 @@ void UDisks2::dbus_interfaceAdded(const QDBusObjectPath &path, const QMap<QStrin
 {
     // path: o [path]
     // nodes: a{sa{sv} [dict of strings dict of string variants]
-    qDebug() << "ifaceadded" << path.path() << interfaces;
     QString node = lastPart(path.path());
     if (path.path().startsWith("/org/freedesktop/UDisks2/block_devices")) {
         if (interfaces.contains("org.freedesktop.UDisks2.Block"))
@@ -191,7 +190,6 @@ void UDisks2::dbus_interfaceRemoved(const QDBusObjectPath &path, const QStringLi
 {
     // path: o [path]
     // interfaces: as [list of strings]
-    qDebug() << "ifaceremoved" << path.path() << interfaces;
     QString node = lastPart(path.path());
     if (path.path().startsWith("/org/freedesktop/UDisks2/block_devices")) {
         if (interfaces.contains("org.freedesktop.UDisks2.Block")) {
@@ -276,7 +274,8 @@ UDisks2Filesystem *UDisks2Block::fileSystem()
 
 void UDisks2Block::self_propertiesChanged(const QString &interface, const QVariantMap &changed, const QStringList &invalidated)
 {
-    qDebug() << "blockpropchange" << interface << changed << invalidated;
+    update();
+    updateFilesystem();
 }
 
 
@@ -309,7 +308,7 @@ void UDisks2Drive::update()
 
 void UDisks2Drive::self_propertiesChanged(const QString &interface, const QVariantMap &changed, const QStringList &invalidated)
 {
-    qDebug() << "drivepropchange" << interface << changed << invalidated;
+    update();
 }
 
 
