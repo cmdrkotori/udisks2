@@ -57,26 +57,6 @@ QStringList UDisks2::blockDevices()
     return response;
 }
 
-UDisks2::BlockInfo UDisks2::blockDeviceInfo(const QString &node)
-{
-    QDBusInterface ud2("org.freedesktop.UDisks2",
-                       "/org/freedesktop/UDisks2/block_devices/" + node,
-                       "org.freedesktop.UDisks2.Block",
-                       QDBusConnection::systemBus());
-    if (!ud2.isValid())
-        return BlockInfo();
-    BlockInfo info;
-    info.name = node;
-    info.dev = ud2.property("Device").toString();
-    info.id = ud2.property("Id").toString();
-    info.drive = lastPart(ud2.property("Drive").value<QDBusObjectPath>().path());
-    info.size = ud2.property("Size").toULongLong();
-    info.readonly = ud2.property("ReadOnly").toBool();
-    info.usage = ud2.property("IdUsage").toString();
-    info.type = ud2.property("IdType").toString();
-    return info;
-}
-
 UDisks2Block *UDisks2::blockDevice(const QString &node)
 {
     return blocks_.contains(node) ? blocks_[node] : NULL;
@@ -104,27 +84,6 @@ QStringList UDisks2::drives()
         }
     }
     return response;
-}
-
-UDisks2::DriveInfo UDisks2::driveInfo(const QString &node) {
-    QDBusInterface ud2("org.freedesktop.UDisks2",
-                       "/org/freedesktop/UDisks2/drives/" + node,
-                       "org.freedesktop.UDisks2.Drive",
-                       QDBusConnection::systemBus());
-    if (!ud2.isValid())
-        return DriveInfo();
-    DriveInfo info;
-    info.name = node;
-    info.size = ud2.property("Size").toULongLong();
-    info.vendor = ud2.property("Vendor").toString();
-    info.model = ud2.property("Model").toString();
-    info.serial = ud2.property("Serial").toString();
-    info.id = ud2.property("Id").toString();
-    info.media = ud2.property("Media").toString();
-    info.optical = ud2.property("Optical").toBool();
-    info.removable = ud2.property("MediaRemovable").toBool();
-    info.available = ud2.property("MediaAvailable").toBool();
-    return info;
 }
 
 UDisks2Drive *UDisks2::drive(const QString &node)
@@ -206,16 +165,6 @@ void UDisks2::dbus_interfaceRemoved(const QDBusObjectPath &path, const QStringLi
     }
 }
 
-QString UDisks2::DriveInfo::toString()
-{
-    return QString("name: %1\nsize: %2\nvendor: %3\nmodel: %4\nserial: %5\nid: %6\nmedia: %7\noptical: %8\nremovable: %9\navailable: %10").arg(name).arg(size).arg(vendor).arg(model).arg(serial).arg(id).arg(media).arg(optical).arg(removable).arg(available);
-}
-
-QString UDisks2::BlockInfo::toString()
-{
-    return QString("name: %1\ndev: %2\nid: %3\ndrive: %4\nsize: %5\nreadonly: %6\nusage: %7\ntype: %8").arg(name).arg(dev).arg(id).arg(drive).arg(size).arg(readonly).arg(usage).arg(type);
-}
-
 UDisks2Block::UDisks2Block(const QString &node, QObject *parent) :
     QObject(parent), name(node), fs(NULL)
 {
@@ -230,6 +179,14 @@ UDisks2Block::UDisks2Block(const QString &node, QObject *parent) :
     update();
     if (!property("IdType").toString().isEmpty())
         addFilesystem();
+}
+
+QString UDisks2Block::toString()
+{
+    return QString("name: %1\ndev: %2\nid: %3\ndrive: %4\nsize: %5\n"
+                   "readonly: %6\nusage: %7\ntype: %8")
+            .arg(name).arg(dev).arg(id).arg(drive).arg(size).arg(readonly)
+            .arg(usage).arg(type);
 }
 
 void UDisks2Block::update()
@@ -291,6 +248,14 @@ UDisks2Drive::UDisks2Drive(const QString &node, QObject *parent) :
                    "org.freedesktop.DBus.Properties", "PropertiesChanged",
                    this, SLOT(self_propertiesChanged(QString,QVariantMap,QStringList)));
     update();
+}
+
+QString UDisks2Drive::toString()
+{
+    return QString("name: %1\nsize: %2\nvendor: %3\nmodel: %4\nserial: %5\n"
+                   "id: %6\nmedia: %7\noptical: %8\nremovable: %9\navailable: %10")
+            .arg(name).arg(size).arg(vendor).arg(model).arg(serial).arg(id)
+            .arg(media).arg(optical).arg(removable).arg(available);
 }
 
 void UDisks2Drive::update()

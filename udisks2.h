@@ -11,43 +11,13 @@ class UDisks2Filesystem;
 class UDisks2 : public QObject {
     Q_OBJECT
 public:
-    class BlockInfo {
-    public:
-        BlockInfo() {}
-        QString name;
-        QString dev;
-        QString id;
-        QString drive;
-        qulonglong size;
-        bool readonly;
-        QString usage;
-        QString type;
-        QString toString();
-    };
-    class DriveInfo {
-    public:
-        DriveInfo() {}
-        QString name;
-        qulonglong size;
-        QString vendor;
-        QString model;
-        QString serial;
-        QString id;
-        QString media;
-        bool optical;
-        bool removable;
-        bool available;
-        QString toString();
-    };
     explicit UDisks2(QObject *parent = NULL);
     ~UDisks2();
 
     QStringList blockDevices();
-    BlockInfo blockDeviceInfo(const QString &node);
     UDisks2Block *blockDevice(const QString &node);
 
     QStringList drives();
-    DriveInfo driveInfo(const QString &node);
     UDisks2Drive *drive(const QString &node);
 
 signals:

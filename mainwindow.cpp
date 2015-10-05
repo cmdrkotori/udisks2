@@ -24,7 +24,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_listWidget_currentTextChanged(const QString &currentText)
 {
-    ui->textEdit->setText(disks->driveInfo(currentText).toString());
+    ui->textEdit->setText(disks->drive(currentText)->toString());
 }
 
 void MainWindow::udisks2_blockAdded(const QString &node)
