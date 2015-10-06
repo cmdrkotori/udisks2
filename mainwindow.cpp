@@ -44,15 +44,19 @@ void MainWindow::on_blocks_currentTextChanged(const QString &currentText)
 void MainWindow::udisks2_blockAdded(const QString &node)
 {
     ui->msgs->addItem("Connected block " + node);
+    ui->blocks->addItem(node);
 }
 
 void MainWindow::udisks2_blockRemoved(const QString &node)
 {
     ui->msgs->addItem("Disconnected block " + node);
+    foreach (auto item, ui->blocks->findItems(node, Qt::MatchExactly))
+        delete item;
 }
 
 void MainWindow::udisks2_blockChanged(const QString &node)
 {
+    ui->msgs->addItem("Block " + node + " changed");
     if (ui->blocks->currentItem() && ui->blocks->currentItem()->text() == node) {
         ui->blockProps->setText(disks->blockDevice(node)->toString());
     }
@@ -74,6 +78,7 @@ void MainWindow::udisks2_driveRemoved(const QString &node)
 
 void MainWindow::udisks2_driveChanged(const QString &node)
 {
+    ui->msgs->addItem("Drive " + node + " changed");
     if (ui->listWidget->currentItem() && ui->listWidget->currentItem()->text() == node)
         ui->textEdit->setText(disks->drive(node)->toString());
 }
@@ -99,6 +104,7 @@ void MainWindow::udisks2_filesystemRemoved(const QString &node)
 
 void MainWindow::udisks2_filesystemChanged(const QString &node)
 {
+    ui->msgs->addItem("Block " + node + " changed its filesystem");
     if (ui->blocks->currentItem() && ui->blocks->currentItem()->text() == node) {
         ui->mounts->clear();
         ui->mounts->addItems(disks->blockDevice(node)->fileSystem()->mountPoints());
