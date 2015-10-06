@@ -1,5 +1,15 @@
 #include "udisks2.h"
 
+// Custom type for unmarhsalling byte arrays
+typedef QList<unsigned char> dbus_ay;
+QString dbus_ay_toString(const dbus_ay &data) {
+    QString output;
+    foreach(unsigned char c, data)
+        if (c)  output.append(c);
+    return output;
+}
+Q_DECLARE_METATYPE(dbus_ay)
+
 UDisks2::UDisks2(QObject *parent) :
     QObject(parent)
 {
@@ -182,7 +192,7 @@ UDisks2Block::UDisks2Block(const QString &node, QObject *parent) :
                    "org.freedesktop.DBus.Properties", "PropertiesChanged",
                    this, SLOT(self_propertiesChanged(QString,QVariantMap,QStringList)));
     update();
-    if (!property("IdType").toString().isEmpty())
+    if (!type.isEmpty())
         addFilesystem();
 }
 
@@ -290,20 +300,30 @@ UDisks2Filesystem::UDisks2Filesystem(const QString &node, QObject *parent)
     name = node;
     QDBusConnection system = QDBusConnection::systemBus();
     dbus = new QDBusInterface("org.freedesktop.UDisks2",
-                              "/org/freedesktop/UDisks2/drives/" + node,
+                              "/org/freedesktop/UDisks2/block_devices/" + node,
                               "org.freedesktop.UDisks2.Filesystem",
                               system, parent);
-    update();
+    dbusProp = new QDBusInterface("org.freedesktop.UDisks2",
+                              "/org/freedesktop/UDisks2/block_devices/" + node,
+                              "org.freedesktop.DBus.Properties",
+                              system, parent);
+    emit update();
 }
 
 QStringList UDisks2Filesystem::mountPoints() const { return mountPoints_; }
 
 void UDisks2Filesystem::update()
 {
-    auto points = dbus->property("MountPoints").value<QList<QByteArray>>();
-    mountPoints_.empty();
-    while (!points.empty())
-        mountPoints_.append(QString::fromLocal8Bit(points.takeFirst()));
+    mountPoints_.clear();
+    QDBusMessage reply = dbusProp->call("Get", "org.freedesktop.UDisks2.Filesystem", "MountPoints");
+    QVariant v = reply.arguments().first();
+    QDBusArgument arg = v.value<QDBusVariant>().variant().value<QDBusArgument>();
+    arg.beginArray();
+    while (!arg.atEnd()) {
+        dbus_ay data;
+        arg >> data;
+        mountPoints_.append(dbus_ay_toString(data));
+    }
 }
 
 bool UDisks2Filesystem::isValid()

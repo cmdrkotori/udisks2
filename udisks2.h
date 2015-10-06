@@ -95,6 +95,7 @@ public:
 
 private:
     QDBusInterface *dbus;
+    QDBusInterface *dbusProp;
     QStringList mountPoints_;
 };
 
