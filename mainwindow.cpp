@@ -33,7 +33,6 @@ void MainWindow::on_listWidget_currentTextChanged(const QString &currentText)
 
 void MainWindow::on_blocks_currentTextChanged(const QString &currentText)
 {
-    qDebug() << currentText;
     auto block = disks->blockDevice(currentText);
     ui->blockProps->setText(block->toString());
     auto fs = block->fileSystem();
