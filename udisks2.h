@@ -73,10 +73,11 @@ public:
 signals:
     void filesystemAdded(const QString& node);
     void filesystemRemoved(const QString &node);
+    void filesystemChanged(const QString &node);
     void changed(const QString &node);
 
 private slots:
-    void self_propertiesChanged(const QString &interface, const QVariantMap &changed, const QStringList &invalidated);
+    void self_propertiesChanged(const QString &interface, const QVariantMap &changedProp, const QStringList &invalidatedProp);
 
 private:
     QDBusInterface *dbus;

@@ -244,11 +244,16 @@ UDisks2Filesystem *UDisks2Block::fileSystem()
     return fs;
 }
 
-void UDisks2Block::self_propertiesChanged(const QString &interface, const QVariantMap &changed, const QStringList &invalidated)
+void UDisks2Block::self_propertiesChanged(const QString &interface, const QVariantMap &changedProp, const QStringList &invalidatedProp)
 {
-    update();
-    updateFilesystem();
-    emit this->changed(name);
+    if (interface == "org.freedesktop.UDisks2.Block") {
+        update();
+        emit changed(name);
+    }
+    if (interface == "org.freedesktop.UDisks2.Filesystem") {
+        updateFilesystem();
+        emit filesystemChanged(name);
+    }
 }
 
 
