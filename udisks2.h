@@ -27,9 +27,10 @@ signals:
     void driveChanged(const QString& node);
     void blockDeviceAdded(const QString& node);
     void blockDeviceRemoved(const QString &node);
-    void blockChanged(const QString &node);
+    void blockDeviceChanged(const QString &node);
     void filesystemAdded(const QString& node);
     void filesystemRemoved(const QString &node);
+    void filesystemChanged(const QString &node);
 
 private:
     void addDrive(const QString &node);

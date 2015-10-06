@@ -124,8 +124,10 @@ void UDisks2::addBlock(const QString &node)
                 this, &UDisks2::filesystemAdded);
         connect(block, &UDisks2Block::filesystemRemoved,
                 this, &UDisks2::filesystemRemoved);
+        connect(block, &UDisks2Block::filesystemChanged,
+                this, &UDisks2::filesystemChanged);
         connect(block, &UDisks2Block::changed,
-                this, &UDisks2::blockChanged);
+                this, &UDisks2::blockDeviceChanged);
         blocks_.insert(node, block);
         emit blockDeviceAdded(node);
     }

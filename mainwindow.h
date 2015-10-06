@@ -23,10 +23,13 @@ private slots:
     void on_blocks_currentTextChanged(const QString &currentText);
     void udisks2_blockAdded(const QString &node);
     void udisks2_blockRemoved(const QString &node);
+    void udisks2_blockChanged(const QString &node);
     void udisks2_driveAdded(const QString &node);
     void udisks2_driveRemoved(const QString &node);
+    void udisks2_driveChanged(const QString &node);
     void udisks2_filesystemAdded(const QString &node);
     void udisks2_filesystemRemoved(const QString &node);
+    void udisks2_filesystemChanged(const QString &node);
 
 private:
     Ui::MainWindow *ui;
