@@ -105,3 +105,21 @@ void MainWindow::udisks2_filesystemChanged(const QString &node)
         ui->mounts->addItems(disks->blockDevice(node)->fileSystem()->mountPoints());
     }
 }
+
+void MainWindow::on_mount_clicked()
+{
+    if (!ui->blocks->currentItem())
+        return;
+    auto fs = disks->blockDevice(ui->blocks->currentItem()->text())->fileSystem();
+    if (fs)
+        fs->mount();
+}
+
+void MainWindow::on_unmount_clicked()
+{
+    if (!ui->blocks->currentItem())
+        return;
+    auto fs = disks->blockDevice(ui->blocks->currentItem()->text())->fileSystem();
+    if (fs)
+        fs->unmount();
+}

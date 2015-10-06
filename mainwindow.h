@@ -31,6 +31,10 @@ private slots:
     void udisks2_filesystemRemoved(const QString &node);
     void udisks2_filesystemChanged(const QString &node);
 
+    void on_mount_clicked();
+
+    void on_unmount_clicked();
+
 private:
     Ui::MainWindow *ui;
     UDisks2 *disks;
