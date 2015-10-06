@@ -20,6 +20,7 @@ public:
 
 private slots:
     void on_listWidget_currentTextChanged(const QString &currentText);
+    void on_blocks_currentTextChanged(const QString &currentText);
     void udisks2_blockAdded(const QString &node);
     void udisks2_blockRemoved(const QString &node);
     void udisks2_driveAdded(const QString &node);

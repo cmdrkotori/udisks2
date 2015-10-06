@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(disks, &UDisks2::blockDeviceAdded, this, &MainWindow::udisks2_blockAdded);
     connect(disks, &UDisks2::blockDeviceRemoved, this, &MainWindow::udisks2_blockRemoved);
     ui->listWidget->addItems(disks->drives());
+    ui->blocks->addItems(disks->blockDevices());
 }
 
 MainWindow::~MainWindow()
@@ -25,6 +26,17 @@ MainWindow::~MainWindow()
 void MainWindow::on_listWidget_currentTextChanged(const QString &currentText)
 {
     ui->textEdit->setText(disks->drive(currentText)->toString());
+}
+
+void MainWindow::on_blocks_currentTextChanged(const QString &currentText)
+{
+    qDebug() << currentText;
+    auto block = disks->blockDevice(currentText);
+    ui->blockProps->setText(block->toString());
+    auto fs = block->fileSystem();
+    ui->mounts->clear();
+    if (fs)
+        ui->mounts->addItems(fs->mountPoints());
 }
 
 void MainWindow::udisks2_blockAdded(const QString &node)
@@ -54,10 +66,18 @@ void MainWindow::udisks2_driveRemoved(const QString &node)
 void MainWindow::udisks2_filesystemAdded(const QString &node)
 {
     ui->msgs->addItem("Block " + node + " got a filesystem");
+    if (ui->blocks->currentItem() && ui->blocks->currentItem()->text() == node) {
+        auto block = disks->blockDevice(node);
+        ui->mounts->clear();
+        ui->mounts->addItems(block->fileSystem()->mountPoints());
+    }
 }
 
 void MainWindow::udisks2_filesystemRemoved(const QString &node)
 {
     ui->msgs->addItem("Block " + node + " lost a filesystem");
+    if (ui->blocks->currentItem()
+            && ui->blocks->currentItem()->text() == node) {
+        ui->mounts->clear();
+    }
 }
-
