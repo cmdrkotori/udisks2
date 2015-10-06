@@ -319,6 +319,17 @@ UDisks2Filesystem::UDisks2Filesystem(const QString &node, QObject *parent)
 
 QStringList UDisks2Filesystem::mountPoints() const { return mountPoints_; }
 
+QString UDisks2Filesystem::mount()
+{
+    QDBusMessage reply = dbus->call("Mount", QVariantMap());
+    return reply.arguments().first().toString();
+}
+
+void UDisks2Filesystem::unmount()
+{   dbus->call("Unmount", QVariantMap());
+
+}
+
 void UDisks2Filesystem::update()
 {
     mountPoints_.clear();

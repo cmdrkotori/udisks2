@@ -90,6 +90,8 @@ class UDisks2Filesystem : public QObject {
 public:
     UDisks2Filesystem(const QString &node, QObject *parent = NULL);
     QStringList mountPoints() const;
+    QString mount();
+    void unmount();
     void update();
     bool isValid();
 
