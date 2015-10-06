@@ -21,3 +21,7 @@ HEADERS  += mainwindow.h \
     udisks2.h
 
 FORMS    += mainwindow.ui
+
+OTHER_FILES += \
+    README.md \
+    LICENSE
