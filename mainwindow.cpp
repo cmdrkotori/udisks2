@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(disks, &UDisks2::blockDeviceAdded, this, &MainWindow::udisks2_blockAdded);
     connect(disks, &UDisks2::blockDeviceRemoved, this, &MainWindow::udisks2_blockRemoved);
     connect(disks, &UDisks2::blockDeviceChanged, this, &MainWindow::udisks2_blockChanged);
-    ui->listWidget->addItems(disks->drives());
+    ui->drives->addItems(disks->drives());
     ui->blocks->addItems(disks->blockDevices());
 }
 
@@ -26,9 +26,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_listWidget_currentTextChanged(const QString &currentText)
+void MainWindow::on_drives_currentTextChanged(const QString &currentText)
 {
-    ui->textEdit->setText(disks->drive(currentText)->toString());
+    ui->driveProps->setText(disks->drive(currentText)->toString());
 }
 
 void MainWindow::on_blocks_currentTextChanged(const QString &currentText)
@@ -65,13 +65,13 @@ void MainWindow::udisks2_blockChanged(const QString &node)
 void MainWindow::udisks2_driveAdded(const QString &node)
 {
     ui->msgs->addItem("Connected drive " + node);
-    ui->listWidget->addItem(node);
+    ui->drives->addItem(node);
 }
 
 void MainWindow::udisks2_driveRemoved(const QString &node)
 {
     ui->msgs->addItem("Disconnected drive " + node);
-    auto items = ui->listWidget->findItems(node, Qt::MatchExactly);
+    auto items = ui->drives->findItems(node, Qt::MatchExactly);
     foreach (auto item, items)
         delete item;
 }
@@ -79,8 +79,8 @@ void MainWindow::udisks2_driveRemoved(const QString &node)
 void MainWindow::udisks2_driveChanged(const QString &node)
 {
     ui->msgs->addItem("Drive " + node + " changed");
-    if (ui->listWidget->currentItem() && ui->listWidget->currentItem()->text() == node)
-        ui->textEdit->setText(disks->drive(node)->toString());
+    if (ui->drives->currentItem() && ui->drives->currentItem()->text() == node)
+        ui->driveProps->setText(disks->drive(node)->toString());
 }
 
 void MainWindow::udisks2_filesystemAdded(const QString &node)
