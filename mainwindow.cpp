@@ -1,3 +1,4 @@
+#include <QMessageBox>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -117,7 +118,7 @@ void MainWindow::on_mount_clicked()
         return;
     auto fs = disks->blockDevice(ui->blocks->currentItem()->text())->fileSystem();
     if (fs)
-        fs->mount();
+        QMessageBox::information(this, "Mounted directory was", fs->mount());
 }
 
 void MainWindow::on_unmount_clicked()
