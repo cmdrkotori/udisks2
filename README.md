@@ -1,6 +1,8 @@
 ## UDisks2 Qt binders
 A basic set of bindings to org.freedesktop.UDisks2.*.  Designed for people who hate object sprawl.  
 
+Part of the playground series of repositories.  The playground series are helper classes/apps I wrote, mainly uploaded for posterity.
+
 ## Features
 Supports enough to aid "play disc" functionality (detect and mount) in media players.
 
